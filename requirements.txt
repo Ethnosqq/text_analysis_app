@@ -1,0 +1,7 @@
+ttkbootstrap
+transformers
+torch
+keybert
+langdetect
+python-docx
+PyPDF2
