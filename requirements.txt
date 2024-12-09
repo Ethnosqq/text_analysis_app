@@ -5,3 +5,5 @@ keybert
 langdetect
 python-docx
 PyPDF2
+networkx
+matplotlib

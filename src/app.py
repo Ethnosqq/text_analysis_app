@@ -1,10 +1,11 @@
-# src/app.py
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 import tkinter as tk
 from tkinter import filedialog
 from text_analyzer import TextAnalyzer
 from file_handler import extract_text_from_docx, extract_text_from_pdf
+from ontology_builder import OntologyBuilder
+
 
 class TextAnalysisApp:
     def __init__(self, root):
@@ -13,6 +14,7 @@ class TextAnalysisApp:
 
         # Инициализация анализатора текста
         self.analyzer = TextAnalyzer()
+        self.ontology_builder = OntologyBuilder()
 
         # Текстовое поле для ввода текста
         self.text_input_label = ttk.Label(root, text="Введите текст для анализа:")
@@ -45,9 +47,17 @@ class TextAnalysisApp:
         self.analyze_button = ttk.Button(root, text="Анализировать текст", command=self.analyze_text, bootstyle=SUCCESS)
         self.analyze_button.pack(pady=5)
 
-        # Кнопка для сохранения результатов
-        self.save_button = ttk.Button(root, text="Сохранить результат", command=self.save_results, bootstyle=WARNING)
-        self.save_button.pack(pady=5)
+        # Кнопка для создания онтологии
+        self.build_ontology_button = ttk.Button(root, text="Создать онтологию", command=self.build_ontology, bootstyle=INFO)
+        self.build_ontology_button.pack(pady=5)
+
+        # Кнопка для сохранения графа онтологии
+        self.save_graph_button = ttk.Button(root, text="Сохранить граф", command=self.save_graph, bootstyle=PRIMARY)
+        self.save_graph_button.pack(pady=5)
+
+        # Кнопка для сохранения онтологии в JSON
+        self.save_ontology_button = ttk.Button(root, text="Сохранить онтологию", command=self.save_ontology, bootstyle=SECONDARY)
+        self.save_ontology_button.pack(pady=5)
 
         # Поле для вывода результата
         self.result_label = ttk.Label(root, text="Результат анализа:")
@@ -91,6 +101,42 @@ class TextAnalysisApp:
         # Вывод результата
         result = f"{language_message}Аннотация:\n{summarized_text}\n\nКлючевые слова:\n{', '.join(keywords)}"
         self.display_result(result)
+
+    def build_ontology(self):
+        input_text = self.text_input.get("1.0", "end").strip()
+        if not input_text:
+            self.display_result("Пожалуйста, введите текст или загрузите файл.")
+            return
+
+        # Извлечение ключевых слов (используем существующий анализатор)
+        keywords = self.analyzer.extract_keywords(input_text, num_keywords=5)
+
+        # Создание онтологии
+        formula = self.ontology_builder.build_ontology(keywords)
+
+        # Визуализация графа онтологии
+        self.ontology_builder.visualize_ontology()
+
+        # Отображение формулы онтологии
+        self.display_result(f"Формула онтологии:\n{formula}")
+
+    def save_graph(self):
+        file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", "*.png")])
+        if file_path:
+            try:
+                self.ontology_builder.save_graph_as_image(file_path)
+                self.display_result("Граф успешно сохранён.")
+            except Exception as e:
+                self.display_result(f"Ошибка при сохранении графа: {e}")
+
+    def save_ontology(self):
+        file_path = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON files", "*.json")])
+        if file_path:
+            try:
+                self.ontology_builder.save_ontology_as_json(file_path)
+                self.display_result("Онтология успешно сохранена.")
+            except Exception as e:
+                self.display_result(f"Ошибка при сохранении онтологии: {e}")
 
     def save_results(self):
         if not hasattr(self, 'last_result'):

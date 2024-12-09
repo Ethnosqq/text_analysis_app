@@ -1,0 +1,35 @@
+{
+    "formula": "C1 <= *C2+C3",
+    "nodes": [
+        {
+            "id": "C1",
+            "label": "esl bangkok"
+        },
+        {
+            "id": "C2",
+            "label": "hotel bangkok"
+        },
+        {
+            "id": "C3",
+            "label": "hotel esl"
+        },
+        {
+            "id": "C4",
+            "label": "bangkok best"
+        },
+        {
+            "id": "C5",
+            "label": "bangkok"
+        }
+    ],
+    "edges": [
+        [
+            "C1",
+            "C2"
+        ],
+        [
+            "C2",
+            "C3"
+        ]
+    ]
+}
