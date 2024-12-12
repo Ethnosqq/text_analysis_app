@@ -163,6 +163,6 @@ class TextAnalysisApp:
 
 
 if __name__ == "__main__":
-    root = ttk.Window(themename="darkly")
+    root = ttk.Window(themename="solar")
     app = TextAnalysisApp(root)
     root.mainloop()
